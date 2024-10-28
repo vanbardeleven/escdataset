@@ -2,45 +2,40 @@ import pandas as pd
 import gender_guesser.detector as gender
 
 def add_identity_and_gender(column_name, country_column, names_list):
-    # Initialize gender detector
+
     d = gender.Detector()
     
-    # Read the contestants CSV file into a DataFrame
     df = pd.read_csv('contestants.csv')
-    
-    # Print column names for debugging
+
     print("Columns in DataFrame:", df.columns)
     
-    # Strip whitespace from column names
+
     df.columns = df.columns.str.strip()
-    
-    # Check if the DataFrame is empty
+
     if df.empty:
         print("The DataFrame is empty. Check if the CSV file is correctly populated.")
         return
     
     def get_status(row):
-        # Extract the name and country from the row
+       
         name = row[column_name]
         country = row[country_column]
         
-        # Check if the combination of name and country is in the special list
+       
         if (name, country) in names_list:
-            return 'othere'  # Returns 'othere' for matched name-country pairs
+            return 'othere' 
         else:
-            # Get the first name (assuming it's the first word)
+           
             first_name = name.split()[0]
-            # Return gender prediction
+      
             return d.get_gender(first_name)
     
-    # Create the gender column with either 'othere' or the gender prediction
+
     df['gender'] = df.apply(get_status, axis=1)
     
-    # Save the modified DataFrame back to the same CSV file
     df.to_csv('contestants.csv', index=False)
     print('Updated contestants.csv with identity/gender entries')
 
-# List of (name, country) pairs to check
 names_list = [
     ("Dany Dauberson", "France"), ("Bob Benny", "Belgium"), ("Bob Benny", "Belgium"),
     ("Jean-Claude Pascal", "Luxembourg"), ("Kathy Kirby", "United Kingdom"),
@@ -88,5 +83,5 @@ names_list = [
     ("Olly Alexander", "United Kingdom")
 ]
 
-# Call the function with 'performer' as the column name and 'to_country' as the country column
 add_identity_and_gender('performer', 'to_country', names_list)
+
